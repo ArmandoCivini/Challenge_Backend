@@ -65,9 +65,6 @@ class CountryLanguage(Base):
                           primary_key=True)
     language_name = Column(String, ForeignKey('languages.name'),
                            primary_key=True)
-    
-
-
 
 # Create the tables in the database
 Base.metadata.create_all(engine)
