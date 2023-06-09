@@ -1,5 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, select, text
-from sqlalchemy.orm import declarative_base, relationship, Session
+from sqlalchemy import (create_engine, Column,
+                        Integer, String, ForeignKey
+                        )
+from sqlalchemy.orm import declarative_base, relationship
 
 # Make the engine
 engine = create_engine("sqlite+pysqlite:///:memory:", future=True, echo=False)
@@ -13,10 +15,7 @@ class Country(Base):
 
     name = Column(String, primary_key=True)
     capital = Column(String)
-    currencies = relationship('Currency',
-                              secondary='country_currency',
-                              back_populates='countries'
-                              )
+    currencies = relationship("CountryCurrency", back_populates="country")
     continent = Column(String)
     languages = relationship("CountryLanguage", back_populates="country")
     population = Column(Integer)
@@ -49,10 +48,7 @@ class Currency(Base):
     code = Column(String, primary_key=True)
     name = Column(String)
     symbol = Column(String)
-    countries = relationship('Country',
-                             secondary='country_currency',
-                             back_populates='currencies'
-                             )
+    countries = relationship("CountryCurrency", back_populates="currency")
 
 
 class CountryCurrency(Base):
@@ -62,16 +58,12 @@ class CountryCurrency(Base):
                           primary_key=True)
     currency_code = Column(String, ForeignKey('currencies.code'),
                            primary_key=True)
+    order = Column(Integer)
+    currency = relationship("Currency", back_populates="countries")
+    country = relationship("Country", back_populates="currencies")
 
 
 # Create the tables in the database
 Base.metadata.create_all(engine)
 
-p = Country()
-a = CountryLanguage(order=1)
-a.language = Language()
-p.languages.append(a)
 
-for assoc in p.languages:
-    print(assoc.order)
-    print(assoc.language)
