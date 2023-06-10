@@ -67,3 +67,5 @@ class CountryCurrency(Base):
 Base.metadata.create_all(engine)
 
 
+def get_engine():
+    return engine
