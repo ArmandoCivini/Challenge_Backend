@@ -1,4 +1,5 @@
-from database_schema import Country, CountryLanguage
+from database_schema import (Country, CountryLanguage,
+                             CountryCurrency, Currency)
 from sqlalchemy.sql import functions, desc
 
 
@@ -36,3 +37,26 @@ def get_most_common_second_language(session):
         CountryLanguage.order == 2).group_by(
         CountryLanguage.language_name).order_by(desc('count')).limit(1).all()
     return language_rank
+
+
+def get_most_common_currency(session):
+    currency_rank = session.query(CountryCurrency.currency_code,
+                                  functions.
+                                  count(CountryCurrency.currency_code).label(
+                                        "count")
+                                  ).group_by(
+        CountryCurrency.currency_code).order_by(desc('count')).limit(1).all()
+    currency_name = session.query(Currency.name).filter(
+        Currency.code == currency_rank[0][0]).all()
+    return currency_name[0][0], currency_rank[0][1]
+
+
+def get_countries_density(session):
+    density = session.query(
+        Country.population, Country.area, Country.continent).all()
+    population = [country[0] for country in density]
+    area = [country[1] for country in density]
+    continent = [country[2] for country in density]
+    density_dict = {"population": population, "area": area,
+                    "continent": continent}
+    return density_dict

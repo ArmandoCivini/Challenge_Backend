@@ -1,6 +1,7 @@
 import xlsxwriter
 from queries import (get_all_countries, get_top_10_population,
-                     get_area_percentage, get_most_common_second_language)
+                     get_area_percentage, get_most_common_second_language,
+                     get_most_common_currency, get_countries_density)
 from data_insertion import insert_data
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -94,13 +95,44 @@ def add_most_common_second_language(worksheet, session):
     worksheet.write(28, 1, language_rank[0][1])
 
 
-workbook = xlsxwriter.Workbook('challenge.xlsx')
-worksheet = workbook.add_worksheet("Stats")
+def add_most_common_currency(worksheet, session):
+    currency_rank = get_most_common_currency(session)
+    worksheet.write(26, 4, "Most common currency:")
+    worksheet.write(27, 4, "Currency")
+    worksheet.write(27, 5, "Count")
+    worksheet.write(28, 4, currency_rank[0])
+    worksheet.write(28, 5, currency_rank[1])
 
-session = insert_data()
-add_top_10_population(worksheet, session)
-add_area_percentage(worksheet, session)
-add_most_common_second_language(worksheet, session)
+
+def add_density_graph(worksheet, session):
+    plt.clf()
+    fig = sns.relplot(x="population", y="area", hue="continent",
+                        data=get_countries_density(session))
+    fig.set(xscale="log")
+    fig.set(yscale="log")
+    fig.set(xlabel="Population")
+    fig.set(ylabel="Area")
+    fig.set(title="Population vs Area by continent(log scale)")
+    plt.savefig("density_graph.png")
+    size_options = {'x_scale': 0.7, 'y_scale': 0.7}
+
+    worksheet.insert_image(30, 0, "density_graph.png", size_options)
 
 
-workbook.close()
+def create_stats_sheet(workbook, session):
+    worksheet = workbook.add_worksheet("Stats")
+    add_top_10_population(worksheet, session)
+    add_area_percentage(worksheet, session)
+    add_most_common_second_language(worksheet, session)
+    add_most_common_currency(worksheet, session)
+    add_density_graph(worksheet, session)
+
+
+def create_excel():
+    workbook = xlsxwriter.Workbook('challenge.xlsx')
+    session = insert_data()
+
+    create_countries_sheet(workbook, session)
+    create_stats_sheet(workbook, session)
+
+    workbook.close()
