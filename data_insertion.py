@@ -20,6 +20,7 @@ def get_attribute_indx(obj, attr, indx):
 
 
 def add_currencies(currencies_data, country, curr_dict):
+    # adds all currencies of a country to the database
     if currencies_data is None or len(currencies_data) == 0:
         return country, curr_dict
     i = 1
@@ -38,6 +39,7 @@ def add_currencies(currencies_data, country, curr_dict):
 
 
 def add_languages(languages_data, country, langs_dict):
+    # adds all languages of a country to the database
     if languages_data is None or len(languages_data) == 0:
         return country, langs_dict
     i = 1
@@ -55,6 +57,7 @@ def add_languages(languages_data, country, langs_dict):
 
 
 def add_country(country_data, session, langs_dict, curr_dict):
+    # adds a country to the database
     name = country_data["name"]["common"]
     capital = get_attribute_indx(country_data, "capital", 0)
     currencies = get_attribute(country_data, "currencies")
@@ -77,6 +80,7 @@ def add_country(country_data, session, langs_dict, curr_dict):
 
 
 def add_countries(data, session):
+    # adds all countries to the database
     langs_dict = {}
     curr_dict = {}
     for country_data in data:

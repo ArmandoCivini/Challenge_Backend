@@ -8,6 +8,7 @@ def get_all_countries(session):
 
 
 def get_top_10_population(session):
+    # returns the top 10 countries by population
     countries = session.query(Country).order_by(
         Country.population.desc()).limit(10).all()
     names = [country.name for country in countries]
@@ -16,6 +17,8 @@ def get_top_10_population(session):
 
 
 def get_area_percentage(session):
+    # returns the percentage of the world area of the top 9 countries
+    # and accumulate the rest of the world in the 10th place
     total_area = session.query(functions.sum(Country.area)).scalar()
     top_area = session.query(Country).order_by(
         Country.area.desc()).limit(9).all()
@@ -29,6 +32,7 @@ def get_area_percentage(session):
 
 
 def get_most_common_second_language(session):
+    # returns the most common second language out of all countries
     language_rank = session.query(CountryLanguage.language_name,
                                   functions.
                                   count(CountryLanguage.language_name).label(
@@ -40,6 +44,7 @@ def get_most_common_second_language(session):
 
 
 def get_most_common_currency(session):
+    # returns the most common currency out of all countries
     currency_rank = session.query(CountryCurrency.currency_code,
                                   functions.
                                   count(CountryCurrency.currency_code).label(
@@ -52,6 +57,7 @@ def get_most_common_currency(session):
 
 
 def get_countries_density(session):
+    # returns the population, area and continent of all countries
     density = session.query(
         Country.population, Country.area, Country.continent).all()
     population = [country[0] for country in density]

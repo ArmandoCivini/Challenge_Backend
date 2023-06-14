@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 
 
 def set_attributes(attributes):
+    # returns the index of the attribute with order 1
+    # if there is no such attribute, returns -1
     if attributes is None:
         return -1
     for i, attribute in enumerate(attributes):
@@ -17,6 +19,7 @@ def set_attributes(attributes):
 
 
 def set_currency(country):
+    # sets the currency of a country to the currency with order 1
     num = set_attributes(country.currencies)
     if num == -1:
         country._currency = ""
@@ -26,6 +29,7 @@ def set_currency(country):
 
 
 def set_language(country):
+    # sets the language of a country to the language with order 1
     num = set_attributes(country.languages)
     if num == -1:
         country._language = ""
@@ -35,6 +39,7 @@ def set_language(country):
 
 
 def create_countries_sheet(workbook, session):
+    # creates a sheet with all countries and their attributes
     worksheet = workbook.add_worksheet("Countries")
 
     countries = get_all_countries(session)
@@ -61,6 +66,7 @@ def create_countries_sheet(workbook, session):
 
 
 def add_top_10_population(worksheet, session):
+    # adds a barplot of the top 10 countries by population to the sheet
     names, populations = get_top_10_population(session)
 
     fig = sns.barplot(x=names, y=populations)
@@ -75,6 +81,7 @@ def add_top_10_population(worksheet, session):
 
 
 def add_area_percentage(worksheet, session):
+    # adds a pie chart of the area share by country to the sheet
     plt.clf()
     top_area_names, top_area_area = get_area_percentage(session)
 
@@ -87,6 +94,8 @@ def add_area_percentage(worksheet, session):
 
 
 def add_most_common_second_language(worksheet, session):
+    # adds the most common second language to the sheet
+    # and the number of countries that have it as a second language
     language_rank = get_most_common_second_language(session)
     worksheet.write(26, 0, "Most common second language:")
     worksheet.write(27, 0, "Language")
@@ -96,6 +105,8 @@ def add_most_common_second_language(worksheet, session):
 
 
 def add_most_common_currency(worksheet, session):
+    # adds the most common currency to the sheet
+    # and the number of countries that have it as a currency
     currency_rank = get_most_common_currency(session)
     worksheet.write(26, 4, "Most common currency:")
     worksheet.write(27, 4, "Currency")
@@ -105,6 +116,8 @@ def add_most_common_currency(worksheet, session):
 
 
 def add_density_graph(worksheet, session):
+    # adds a scatterplot of population vs area to the sheet
+    # with the points colored by continent and log scale
     plt.clf()
     fig = sns.relplot(x="population", y="area", hue="continent",
                         data=get_countries_density(session))
@@ -120,6 +133,7 @@ def add_density_graph(worksheet, session):
 
 
 def create_stats_sheet(workbook, session):
+    # creates a sheet with statistics about the countries
     worksheet = workbook.add_worksheet("Stats")
     add_top_10_population(worksheet, session)
     add_area_percentage(worksheet, session)
