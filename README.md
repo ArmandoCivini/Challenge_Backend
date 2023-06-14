@@ -6,3 +6,4 @@
 - instalar sqlalchemy con el comando `pip install SQLAlchemy`.
 - instalar request: `pip install requests`
 - instalar xlsxwriter: `pip install xlsxwriter`
+- instalar xlsxwriter: `pip install seaborn`
